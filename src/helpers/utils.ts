@@ -1,7 +1,7 @@
 import axios from "axios";
 export const errorMessage = (error: any) => {
   const isExios = axios.isAxiosError(error);
-  console.log(isExios);
+  console.log("isExios===>", isExios);
   if (isExios) {
     return error.response?.data.error;
   } else {
