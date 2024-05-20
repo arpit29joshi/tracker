@@ -4,10 +4,9 @@ import { NextResponse } from "next/server";
 const checkToken = (token: string) => {
   let decode;
   try {
-    console.log(token);
-    decode = jwt.verify(token, process.env.TOKEN_SECRET);
-    console.log("decode", decode.userId);
+    decode = jwt.verify(token, process.env.TOKEN_SECREST);
   } catch (error) {
+    console.log("error", error);
     const response = NextResponse.json(
       { error: "Please login again" },
       { status: 400 }
@@ -21,6 +20,6 @@ const checkToken = (token: string) => {
       { status: 400 }
     );
   }
-  console.log(decode);
+  return decode.userId;
 };
 export default checkToken;
