@@ -13,7 +13,6 @@ export async function GET(request: NextRequest) {
         { error: "User does not exist" },
         { status: 400 }
       );
-    console.log(userId);
     const chekUser = await User.findOne({ _id: userId }).select(
       "-password -updatedAt -__v"
     );

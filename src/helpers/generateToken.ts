@@ -4,7 +4,7 @@ import { NextResponse } from "next/server";
 
 const generateTokenAndSetCookie = (userId: ObjectId, res: NextResponse) => {
   console.log("userId", userId);
-  const token = jwt.sign({ userId }, process.env.TOKEN_SECREST, {
+  const token = jwt.sign({ userId }, process.env.TOKEN_SECREST!, {
     expiresIn: "3d",
   });
   console.log(token);
