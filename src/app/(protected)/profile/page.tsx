@@ -8,13 +8,8 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { TaskDialog } from "@/components/ui/TaskDialog";
 
-const tags = Array.from({ length: 50 }).map(
-  (_, i, a) => `v1.2.0-beta.${a.length - i}`
-);
-
 function Profile() {
   const [data, setData] = React.useState<any>([]);
-  console.log(data);
   const [editMode, setEditMode] = useState({
     show: false,
     task: "",
