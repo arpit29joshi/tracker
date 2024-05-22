@@ -67,7 +67,27 @@ export default function Home() {
         const total = newArray.filter((item: any) => {
           return item.isCompleted === true;
         });
+        console.log(total);
         setProgress((total.length / newArray.length) * 100);
+        console.log(
+          userData.isAllTasksCompleted,
+          (total.length / newArray.length) * 100 != 100
+        );
+        if (
+          userData.isAllTasksCompleted &&
+          (total.length / newArray.length) * 100 <= 100
+        ) {
+          await axios.get("/api/user/allTaskComplete");
+          setUserData((prev: any) => {
+            return { ...prev, isAllTasksCompleted: false };
+          });
+        }
+        if ((total.length / newArray.length) * 100 === 100) {
+          await axios.get("/api/user/allTaskComplete");
+          setUserData((prev: any) => {
+            return { ...prev, isAllTasksCompleted: true };
+          });
+        }
       }
     } catch (error) {
       const err = errorMessage(error);
