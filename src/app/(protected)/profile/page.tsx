@@ -14,6 +14,7 @@ const tags = Array.from({ length: 50 }).map(
 
 function Profile() {
   const [data, setData] = React.useState<any>([]);
+  console.log(data);
   const [editMode, setEditMode] = useState({
     show: false,
     task: "",
@@ -46,7 +47,7 @@ function Profile() {
               return (
                 <div
                   key={task._id}
-                  onClick={() => setEditMode({ show: true, task: task.title })}
+                  onClick={() => setEditMode({ show: true, task: task })}
                 >
                   <div className="text-sm">{task.title}</div>
                   <Separator className="my-2" />
@@ -60,14 +61,19 @@ function Profile() {
       </ScrollArea>
       {editMode.show && editMode.task && (
         <TaskDialog
-          taskList={data}
+          editMode={editMode}
           type={1}
           setData={setData}
           modalOpen={true}
           setEditMode={setEditMode}
         />
       )}
-      <TaskDialog taskList={data} type={0} setData={setData} />
+      <TaskDialog
+        taskList={data}
+        type={0}
+        setData={setData}
+        modalOpen={false}
+      />
     </div>
   );
 }

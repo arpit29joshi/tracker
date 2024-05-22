@@ -16,16 +16,17 @@ import { errorMessage } from "@/helpers/utils";
 import axios from "axios";
 
 export function TaskDialog({
-  taskList,
+  editMode,
   type,
   setData,
   modalOpen,
-  setEditMode,
+  setEditMode = () => {},
 }: any) {
-  console.log(taskList);
-  const [newTask, setNewTask] = useState(type === 0 ? "" : taskList?.title);
-  const [disable, setDisable] = useState(taskList ? true : false);
-  const [isDialogOpen, setIsDialogOpen] = useState(modalOpen ? true : false);
+  const [newTask, setNewTask] = useState(
+    !modalOpen ? null : editMode?.task?.title
+  );
+  const [disable, setDisable] = useState(false);
+  const [isDialogOpen, setIsDialogOpen] = useState(modalOpen ?? false); // Initialize state with modalOpen or false
   async function addTask() {
     if (!newTask) return;
     setDisable(true);
@@ -40,6 +41,7 @@ export function TaskDialog({
       const err = errorMessage(error);
       toast({
         title: err,
+        variant: "destructive",
       });
     } finally {
       setDisable(false);
@@ -53,32 +55,57 @@ export function TaskDialog({
     try {
       const response = await axios.put("/api/task", {
         title: newTask,
-        id: taskList._id,
+        id: editMode?.task._id,
       });
-      if (response.status === 201) {
+      if (response.status === 200) {
         console.log(response?.data?.data);
+        setData((prev: any) => {
+          const newArray = prev.map((item: any) => {
+            if (item._id === editMode?.task._id) {
+              console.log("id");
+              const newObj = { ...item, title: newTask };
+              return newObj;
+            }
+            return item;
+          });
+          return newArray;
+        });
       }
     } catch (error) {
       const err = errorMessage(error);
       toast({
         title: err,
+        variant: "destructive",
       });
     } finally {
       setDisable(false);
       setNewTask("");
       setIsDialogOpen(false);
+      setEditMode({ show: false, task: "" });
     }
   }
   return (
     <Dialog
       open={isDialogOpen}
-      onOpenChange={() => {
-        setIsDialogOpen(false);
-        setEditMode({ show: false, task: "" });
+      onOpenChange={(open) => {
+        setIsDialogOpen(open); // Properly handle the open state of the dialog
+        if (!open) {
+          setEditMode({ show: false, task: "" });
+          setNewTask("");
+        }
       }}
     >
       <DialogTrigger asChild>
-        {type === 0 && <Button variant="outline">Add Task</Button>}
+        {type === 0 && (
+          <Button
+            variant="outline"
+            onClick={() => {
+              setIsDialogOpen(true);
+            }}
+          >
+            Add Task
+          </Button>
+        )}
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
@@ -103,7 +130,7 @@ export function TaskDialog({
         </div>
         <DialogFooter>
           <Button
-            onClick={type === 0 ? addTask : () => {}}
+            onClick={type === 0 ? addTask : editTask}
             variant={"default"}
             disabled={disable || !newTask}
           >

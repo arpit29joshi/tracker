@@ -92,6 +92,10 @@ export async function PUT(request: NextRequest) {
         { status: 400 }
       );
     }
+    const task = await Task.findById({ _id: id });
+    if (String(task.userId) !== String(userId)) {
+      return NextResponse.json({ error: "Task not found" }, { status: 400 });
+    }
     const updatedTask = await Task.findOneAndUpdate(
       { _id: id },
       { title },
