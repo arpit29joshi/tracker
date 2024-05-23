@@ -21,9 +21,6 @@ export async function GET(request: NextRequest) {
       }
       user.isAllTasksCompleted = false; // Reset the flag for the next day
       await user.save();
-      console.log(
-        `Updated user ${user.userName}: currentStreak=${user.currentStreak}, longestStreak=${user.longestStreak}`
-      );
     }
 
     // 2. Reset all tasks

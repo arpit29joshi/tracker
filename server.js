@@ -4,6 +4,7 @@ const cron = require("node-cron");
 const axios = require("axios");
 
 const dev = process.env.NODE_ENV !== "production";
+console.log("dev=====>", dev);
 const app = next({ dev });
 const handle = app.getRequestHandler();
 
@@ -27,7 +28,7 @@ app.prepare().then(() => {
       cron.schedule("*/30 * * * * *", async function () {
         console.log("Cron job executed");
         try {
-          const response = await axios.get("http://localhost:3000/api/streak");
+          const response = await axios.get(`${process.env.DOMAIN}/api/streak`);
           console.log("API response:", response.data.message);
         } catch (error) {
           console.log("Error in cron job:", error);
