@@ -5,7 +5,6 @@ import { NextRequest, NextResponse } from "next/server";
 connect();
 
 export async function PUT(request: NextRequest) {
-  console.log("API call");
   try {
     // 1. Update user streaks
     const users = await User.find();
@@ -24,13 +23,10 @@ export async function PUT(request: NextRequest) {
 
     // 2. Reset all tasks
     await Task.updateMany({}, { isCompleted: false });
-    const newTask = await Task.find({});
 
-    console.log("Daily task completed successfully.");
     return NextResponse.json(
       {
         message: "Daily task completed successfully.",
-        data: { newTask, users },
       },
       { status: 201 }
     );

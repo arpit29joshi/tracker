@@ -6,12 +6,18 @@ import { errorMessage } from "@/helpers/utils";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
+import Header from "@/components/shared/Header";
+import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
+  const route = useRouter();
   const [data, setData] = React.useState<any>([]);
   const [userData, setUserData] = React.useState<any>(null);
   const [disable, setDisable] = useState(false);
   const [progress, setProgress] = React.useState(0);
+  const [isLoading, setLoading] = React.useState(true);
+
   console.log(userData);
   const fetchUser = async () => {
     try {
@@ -33,6 +39,8 @@ export default function Home() {
         title: err,
         variant: "destructive",
       });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -105,31 +113,60 @@ export default function Home() {
   }, []);
   return (
     <>
-      {userData?.userName && <p>Welcome Back {userData?.userName} </p>}
-      <p>
-        Current Streak: {userData?.currentStreak && userData?.currentStreak}🔥
-      </p>
-      <p>
-        Longest Streak: {userData?.longestStreak && userData?.longestStreak}🔥💪
-      </p>
-      <Progress value={progress} max={data.length} className="w-80" />
-      <div>
-        {data && data.length > 0 ? (
-          data.map((item: any) => {
-            return (
-              <div className="flex items-center space-x-2" key={item._id}>
-                <Checkbox
-                  id="terms"
-                  checked={item?.isCompleted}
-                  onClick={() => updateTask(item._id)}
-                  disabled={disable}
-                />
-                <Label htmlFor="terms">{item?.title}</Label>
-              </div>
-            );
-          })
+      <Header />
+      <div className="flex flex-col items-center justify-center h-full">
+        {isLoading ? (
+          <div className="loader"></div>
         ) : (
-          <p>No Task Found</p>
+          <>
+            {userData?.userName && (
+              <p className="text-3xl mb-3 font-bold">
+                Welcome Back {userData?.userName}{" "}
+              </p>
+            )}
+            <p className="text-xl font-medium mb-2">
+              Current Streak:{" "}
+              {userData?.currentStreak && userData?.currentStreak}🔥
+            </p>
+            <p className="text-xl font-medium mb-3">
+              Longest Streak:{" "}
+              {userData?.longestStreak && userData?.longestStreak}
+              🔥💪
+            </p>
+            <Progress
+              value={progress}
+              max={data.length}
+              className="w-80 bg-[#2E2E2E]"
+            />
+            <div className="h-[500px] text-center overflow-y-auto">
+              {data && data.length > 0 ? (
+                data.map((item: any) => {
+                  return (
+                    <div
+                      className="flex items-center space-x-2 my-5 justify-center"
+                      key={item._id}
+                    >
+                      <Checkbox
+                        id="terms"
+                        checked={item?.isCompleted}
+                        onClick={() => updateTask(item._id)}
+                        disabled={disable}
+                        className="border border-white rounded-md"
+                      />
+                      <Label htmlFor="terms" className="text-base">
+                        {item?.title}
+                      </Label>
+                    </div>
+                  );
+                })
+              ) : (
+                <p className="text-xl font-medium m-3">No Task Found</p>
+              )}
+              <Button onClick={() => route.push("/profile")} variant={"ghost"}>
+                Add Task
+              </Button>
+            </div>
+          </>
         )}
       </div>
     </>

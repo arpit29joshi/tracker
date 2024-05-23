@@ -28,8 +28,10 @@ function Header() {
     }
   };
   return (
-    <div>
-      <Button onClick={logout}>LogoOut</Button>
+    <div className="flex flex-row-reverse m-3">
+      <Button onClick={logout} variant={"ghost"}>
+        LogOut
+      </Button>
     </div>
   );
 }

@@ -20,6 +20,7 @@ import { toast } from "@/components/ui/use-toast";
 import axios from "axios";
 import { errorMessage } from "@/helpers/utils";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 const formSchema = z.object({
   email: z.string().email({
     message: "Please enter a valid email.",
@@ -30,6 +31,7 @@ const formSchema = z.object({
 });
 
 export default function Login() {
+  const [isLoading, setLoading] = useState(false);
   const route = useRouter();
   // 1. Define your form.
   const form = useForm<z.infer<typeof formSchema>>({
@@ -42,6 +44,7 @@ export default function Login() {
 
   // 2. Define a submit handler.
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    setLoading(true);
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
     try {
@@ -62,45 +65,63 @@ export default function Login() {
         description: "Something went wrong !!! Please try again",
         variant: "destructive",
       });
+    } finally {
+      setLoading(false);
     }
   }
   // ...
 
   return (
-    <>
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-          <FormField
-            control={form.control}
-            name="email"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Email</FormLabel>
-                <FormControl>
-                  <Input placeholder="test@gmail.com" {...field} type="email" />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="password"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Password</FormLabel>
-                <FormControl>
-                  <Input placeholder="*******" {...field} type="password" />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <Button type="submit">Login</Button>
-        </form>
-      </Form>
-      {/* <Link href="/forgot-password">Forgot password?</Link> */}
-      <Link href="/signup">Register</Link>
-    </>
+    <div className="flex flex-col items-center justify-center h-full">
+      <div className="flex justify-center items-center text-center">
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Email</FormLabel>
+                  <FormControl>
+                    <Input
+                      className="text-black"
+                      placeholder="test@gmail.com"
+                      {...field}
+                      type="email"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="password"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Password</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="*******"
+                      className="text-black"
+                      {...field}
+                      type="password"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <Button type="submit" variant={"ghost"} disabled={isLoading}>
+              Login
+            </Button>
+          </form>
+        </Form>
+        {/* <Link href="/forgot-password">Forgot password?</Link> */}
+      </div>
+      <Link href="/signup" className="underline mt-2">
+        Register
+      </Link>
+    </div>
   );
 }

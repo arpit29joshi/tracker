@@ -84,6 +84,35 @@ export function TaskDialog({
       setEditMode({ show: false, task: "" });
     }
   }
+
+  async function DeleteTask() {
+    setDisable(true);
+    try {
+      const response = await axios.put("/api/task/delete", {
+        id: editMode?.task._id,
+      });
+      if (response.status === 201) {
+        console.log(response?.data?.data);
+        setData((prev: any) => {
+          const newArray = prev.filter((item: any) => {
+            return item._id !== editMode?.task._id;
+          });
+          return newArray;
+        });
+      }
+    } catch (error) {
+      const err = errorMessage(error);
+      toast({
+        title: err,
+        variant: "destructive",
+      });
+    } finally {
+      setDisable(false);
+      setNewTask("");
+      setIsDialogOpen(false);
+      setEditMode({ show: false, task: "" });
+    }
+  }
   return (
     <Dialog
       open={isDialogOpen}
@@ -98,10 +127,11 @@ export function TaskDialog({
       <DialogTrigger asChild>
         {type === 0 && (
           <Button
-            variant="outline"
+            variant="ghost"
             onClick={() => {
               setIsDialogOpen(true);
             }}
+            className="mt-3"
           >
             Add Task
           </Button>
@@ -109,14 +139,16 @@ export function TaskDialog({
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>{type === 0 ? "Add Task" : "Edit Task"}</DialogTitle>
-          <DialogDescription>
+          <DialogTitle className="text-black text-xl">
+            {type === 0 ? "Add Task" : "Edit Task"}
+          </DialogTitle>
+          <DialogDescription className="text-gray-700 text-base">
             {type === 0 ? "Add a new task" : "Edit a task"}
           </DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-4">
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="name" className="text-right">
+            <Label htmlFor="name" className="text-right text-black ">
               Task
             </Label>
             <Input
@@ -124,11 +156,20 @@ export function TaskDialog({
               placeholder="Exercise"
               value={newTask}
               onChange={(e) => setNewTask(e.target.value)}
-              className="col-span-3"
+              className="col-span-3 text-black"
             />
           </div>
         </div>
         <DialogFooter>
+          {type != 0 && (
+            <Button
+              variant={"danger"}
+              disabled={disable}
+              onClick={() => DeleteTask()}
+            >
+              Delete Task
+            </Button>
+          )}
           <Button
             onClick={type === 0 ? addTask : editTask}
             variant={"default"}
