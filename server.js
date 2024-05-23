@@ -15,8 +15,10 @@ app.prepare().then(() => {
 
   // Log to ensure the server starts
   console.log("Starting server...");
+  console.log(`> Ready on ${process.env.DOMAIN}`);
 
   server.listen(3000, (err) => {
+    console.log("first", 3000);
     if (err) throw err;
     console.log("> Ready on http://localhost:3000");
 
@@ -29,6 +31,7 @@ app.prepare().then(() => {
         console.log("Cron job executed");
         try {
           const response = await axios.get(`${process.env.DOMAIN}/api/streak`);
+          console.log(response);
           console.log("API response:", response.data.message);
         } catch (error) {
           console.log("Error in cron job:", error);

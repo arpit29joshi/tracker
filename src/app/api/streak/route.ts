@@ -9,7 +9,6 @@ export async function GET(request: NextRequest) {
   try {
     // 1. Update user streaks
     const users = await User.find();
-    console.log("Users fetched: ", users.length);
     for (const user of users) {
       if (user.isAllTasksCompleted) {
         user.currentStreak += 1;
@@ -24,8 +23,7 @@ export async function GET(request: NextRequest) {
     }
 
     // 2. Reset all tasks
-    const taskResult = await Task.updateMany({}, { isCompleted: false });
-    console.log("Tasks updated: ", taskResult.modifiedCount);
+    await Task.updateMany({}, { isCompleted: false });
     const newTask = await Task.find({});
 
     console.log("Daily task completed successfully.");
