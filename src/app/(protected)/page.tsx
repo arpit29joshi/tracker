@@ -39,6 +39,23 @@ export default function Home() {
         title: err,
         variant: "destructive",
       });
+      try {
+        const resData = await axios.get("/api/logout");
+        if (resData.status === 200) {
+          toast({
+            title: "Logout successful",
+            description: "You have been logged out.",
+          });
+          route.push("/login");
+        }
+      } catch (error) {
+        console.log(error);
+        const errMessage = errorMessage(error);
+        toast({
+          title: errMessage,
+          description: "Please try again",
+        });
+      }
     } finally {
       setLoading(false);
     }
@@ -114,61 +131,64 @@ export default function Home() {
   return (
     <>
       <Header />
-      <div className="flex flex-col items-center justify-center h-full">
-        {isLoading ? (
+      {isLoading ? (
+        <div className="flex flex-col items-center justify-center h-full">
           <div className="loader"></div>
-        ) : (
-          <>
-            {userData?.userName && (
-              <p className="text-3xl mb-3 font-bold">
-                Welcome Back {userData?.userName}{" "}
-              </p>
+        </div>
+      ) : (
+        <div className="flex flex-col items-center mt-10 h-full">
+          {userData?.userName && (
+            <p className="text-3xl mb-3 font-bold">
+              Welcome Back {userData?.userName}{" "}
+            </p>
+          )}
+          <p className="text-xl font-medium mb-2">
+            Current Streak: {userData?.currentStreak && userData?.currentStreak}
+            🔥
+          </p>
+          <p className="text-xl font-medium mb-3">
+            Longest Streak: {userData?.longestStreak && userData?.longestStreak}
+            🔥💪
+          </p>
+          <Progress
+            value={progress}
+            max={data.length}
+            className="w-80 bg-[#2E2E2E]"
+          />
+          <div className="h-[50%] text-center overflow-y-auto">
+            {data && data.length > 0 ? (
+              data.map((item: any) => {
+                return (
+                  <div
+                    className="flex items-center space-x-2 my-5 justify-center"
+                    key={item._id}
+                  >
+                    <Checkbox
+                      id="terms"
+                      checked={item?.isCompleted}
+                      onClick={() => updateTask(item._id)}
+                      disabled={disable}
+                      className="border border-white rounded-md"
+                    />
+                    <Label htmlFor="terms" className="text-base">
+                      {item?.title}
+                    </Label>
+                  </div>
+                );
+              })
+            ) : (
+              <p className="text-xl font-medium m-3">No Task Found</p>
             )}
-            <p className="text-xl font-medium mb-2">
-              Current Streak:{" "}
-              {userData?.currentStreak && userData?.currentStreak}🔥
-            </p>
-            <p className="text-xl font-medium mb-3">
-              Longest Streak:{" "}
-              {userData?.longestStreak && userData?.longestStreak}
-              🔥💪
-            </p>
-            <Progress
-              value={progress}
-              max={data.length}
-              className="w-80 bg-[#2E2E2E]"
-            />
-            <div className="h-[500px] text-center overflow-y-auto">
-              {data && data.length > 0 ? (
-                data.map((item: any) => {
-                  return (
-                    <div
-                      className="flex items-center space-x-2 my-5 justify-center"
-                      key={item._id}
-                    >
-                      <Checkbox
-                        id="terms"
-                        checked={item?.isCompleted}
-                        onClick={() => updateTask(item._id)}
-                        disabled={disable}
-                        className="border border-white rounded-md"
-                      />
-                      <Label htmlFor="terms" className="text-base">
-                        {item?.title}
-                      </Label>
-                    </div>
-                  );
-                })
-              ) : (
-                <p className="text-xl font-medium m-3">No Task Found</p>
-              )}
-              <Button onClick={() => route.push("/profile")} variant={"ghost"}>
-                Add Task
-              </Button>
-            </div>
-          </>
-        )}
-      </div>
+          </div>
+          <Button
+            onClick={() => route.push("/profile")}
+            variant={"ghost"}
+            className="mt-5"
+          >
+            Add Task
+          </Button>
+        </div>
+      )}
     </>
   );
 }

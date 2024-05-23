@@ -36,6 +36,9 @@ export function TaskDialog({
       });
       if (response.status === 201) {
         setData((prev: any) => [...prev, response?.data?.data]);
+        toast({
+          title: response?.data?.message,
+        });
       }
     } catch (error) {
       const err = errorMessage(error);
@@ -70,6 +73,9 @@ export function TaskDialog({
           });
           return newArray;
         });
+        toast({
+          title: response?.data?.message,
+        });
       }
     } catch (error) {
       const err = errorMessage(error);
@@ -98,6 +104,9 @@ export function TaskDialog({
             return item._id !== editMode?.task._id;
           });
           return newArray;
+        });
+        toast({
+          title: response?.data?.message,
         });
       }
     } catch (error) {
@@ -166,6 +175,7 @@ export function TaskDialog({
               variant={"danger"}
               disabled={disable}
               onClick={() => DeleteTask()}
+              className="max-sm:mt-5"
             >
               Delete Task
             </Button>

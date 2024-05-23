@@ -27,6 +27,7 @@ function Profile() {
       if (response.status === 200) setData(response?.data?.task);
     } catch (error) {
       const err = errorMessage(error);
+      route.push("/");
       toast({
         title: err,
         variant: "destructive",
@@ -41,57 +42,57 @@ function Profile() {
   return (
     <>
       <Header />
-      <div className="flex flex-col items-center justify-center h-full">
-        {isLoading ? (
+      {isLoading ? (
+        <div className="flex flex-col items-center justify-center h-full">
           <div className="loader"></div>
-        ) : (
-          <>
-            <div className="max-h-[500px] overflow-y-auto text-center flex flex-col justify-center items-center">
-              {data && data.length > 0 ? (
-                data.map((item: any) => {
-                  return (
-                    <div
-                      className="flex items-center space-x-2 my-2"
-                      key={item._id}
-                      onClick={() => setEditMode({ show: true, task: item })}
-                    >
-                      <Label htmlFor="terms" className="text-base underline">
-                        {item?.title}
-                      </Label>
-                    </div>
-                  );
-                })
-              ) : (
-                <p className="text-xl font-medium m-3">No Task Found</p>
-              )}
-            </div>
-
-            {editMode.show && editMode.task && (
-              <TaskDialog
-                editMode={editMode}
-                type={1}
-                setData={setData}
-                modalOpen={true}
-                setEditMode={setEditMode}
-              />
+        </div>
+      ) : (
+        <div className="flex flex-col items-center mt-10 h-full">
+          <div className="max-h-[50%] overflow-y-auto text-center flex flex-col justify-center items-center">
+            {data && data.length > 0 ? (
+              data.map((item: any) => {
+                return (
+                  <div
+                    className="flex items-center space-x-2 my-2"
+                    key={item._id}
+                    onClick={() => setEditMode({ show: true, task: item })}
+                  >
+                    <Label htmlFor="terms" className="text-base underline">
+                      {item?.title}
+                    </Label>
+                  </div>
+                );
+              })
+            ) : (
+              <p className="text-xl font-medium m-3">No Task Found</p>
             )}
+          </div>
+
+          {editMode.show && editMode.task && (
             <TaskDialog
-              taskList={data}
-              type={0}
+              editMode={editMode}
+              type={1}
               setData={setData}
-              modalOpen={false}
+              modalOpen={true}
+              setEditMode={setEditMode}
             />
-            <Button
-              variant="ghost"
-              className="mt-3"
-              size="sm"
-              onClick={() => route.push("/")}
-            >
-              Home
-            </Button>
-          </>
-        )}
-      </div>
+          )}
+          <TaskDialog
+            taskList={data}
+            type={0}
+            setData={setData}
+            modalOpen={false}
+          />
+          <Button
+            variant="ghost"
+            className="mt-3"
+            size="sm"
+            onClick={() => route.push("/")}
+          >
+            Home
+          </Button>
+        </div>
+      )}
     </>
   );
 }
