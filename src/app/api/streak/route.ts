@@ -4,7 +4,7 @@ import Task from "@/models/TaskModel";
 import { NextRequest, NextResponse } from "next/server";
 connect();
 
-export async function GET(request: NextRequest) {
+export async function PUT(request: NextRequest) {
   console.log("API call");
   try {
     // 1. Update user streaks
@@ -32,7 +32,7 @@ export async function GET(request: NextRequest) {
         message: "Daily task completed successfully.",
         data: { newTask, users },
       },
-      { status: 200 }
+      { status: 201 }
     );
   } catch (error: any) {
     console.error("Error in API call: ", error);
