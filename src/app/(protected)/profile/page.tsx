@@ -3,6 +3,7 @@ import { toast } from "@/components/ui/use-toast";
 import { errorMessage } from "@/helpers/utils";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
+import { Pencil } from "lucide-react";
 
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
@@ -47,8 +48,9 @@ function Profile() {
           <div className="loader"></div>
         </div>
       ) : (
-        <div className="flex flex-col items-center mt-10 h-full">
-          <div className="max-h-[50%] overflow-y-auto text-center flex flex-col justify-center items-center">
+        <div className="flex flex-col items-center mt-10 max-h-[90vh] overflow-auto">
+          <p className="text-xl  m-3 font-bold">Your Tasks</p>
+          <div className="max-h-[50VH] overflow-y-auto text-center mx-3 flex flex-col justify-center items-center">
             {data && data.length > 0 ? (
               data.map((item: any) => {
                 return (
@@ -60,6 +62,7 @@ function Profile() {
                     <Label htmlFor="terms" className="text-base underline">
                       {item?.title}
                     </Label>
+                    <Pencil size={12} />
                   </div>
                 );
               })
@@ -83,14 +86,6 @@ function Profile() {
             setData={setData}
             modalOpen={false}
           />
-          <Button
-            variant="ghost"
-            className="mt-3"
-            size="sm"
-            onClick={() => route.push("/")}
-          >
-            Home
-          </Button>
         </div>
       )}
     </>

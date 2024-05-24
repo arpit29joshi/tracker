@@ -136,7 +136,7 @@ export default function Home() {
           <div className="loader"></div>
         </div>
       ) : (
-        <div className="flex flex-col items-center mt-10 h-full">
+        <div className="flex flex-col items-center mt-10 h-full max-h-[70vh]">
           {userData?.userName && (
             <p className="text-3xl mb-3 font-bold">
               Welcome Back {userData?.userName}{" "}
@@ -155,18 +155,18 @@ export default function Home() {
             max={data.length}
             className="w-80 bg-[#2E2E2E]"
           />
-          <div className="h-[50%] text-center overflow-y-auto">
+          <div className=" text-center overflow-y-auto mt-2">
             {data && data.length > 0 ? (
               data.map((item: any) => {
                 return (
                   <div
                     className="flex items-center space-x-2 my-5 justify-center"
                     key={item._id}
+                    onClick={() => updateTask(item._id)}
                   >
                     <Checkbox
                       id="terms"
                       checked={item?.isCompleted}
-                      onClick={() => updateTask(item._id)}
                       disabled={disable}
                       className="border border-white rounded-md"
                     />
@@ -180,13 +180,6 @@ export default function Home() {
               <p className="text-xl font-medium m-3">No Task Found</p>
             )}
           </div>
-          <Button
-            onClick={() => route.push("/profile")}
-            variant={"ghost"}
-            className="mt-5"
-          >
-            Add Task
-          </Button>
         </div>
       )}
     </>
