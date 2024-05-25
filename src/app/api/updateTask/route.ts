@@ -31,8 +31,15 @@ export async function PUT(request: NextRequest) {
     await Task.findByIdAndUpdate(id, {
       isCompleted: !task.isCompleted,
     });
+    const totalTaskCompleted = await Task.find({
+      userId: userId,
+      isCompleted: true,
+    }).select("-password -updatedAt -__v");
     return NextResponse.json(
-      { message: "Task updated successfully" },
+      {
+        message: "Task updated successfully",
+        data: { totalTaskCompleted: totalTaskCompleted?.length },
+      },
       { status: 200 }
     );
   } catch (error: any) {

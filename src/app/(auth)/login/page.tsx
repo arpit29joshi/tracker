@@ -49,7 +49,6 @@ export default function Login() {
     // ✅ This will be type-safe and validated.
     try {
       const resData = await axios.post("/api/login", values);
-      console.log(resData);
       if (resData.status === 200) {
         toast({
           title: "Login successful",

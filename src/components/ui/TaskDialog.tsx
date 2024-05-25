@@ -61,11 +61,9 @@ export function TaskDialog({
         id: editMode?.task._id,
       });
       if (response.status === 200) {
-        console.log(response?.data?.data);
         setData((prev: any) => {
           const newArray = prev.map((item: any) => {
             if (item._id === editMode?.task._id) {
-              console.log("id");
               const newObj = { ...item, title: newTask };
               return newObj;
             }
@@ -98,7 +96,6 @@ export function TaskDialog({
         id: editMode?.task._id,
       });
       if (response.status === 201) {
-        console.log(response?.data?.data);
         setData((prev: any) => {
           const newArray = prev.filter((item: any) => {
             return item._id !== editMode?.task._id;

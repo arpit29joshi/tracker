@@ -17,22 +17,21 @@ export default function Home() {
   const [disable, setDisable] = useState(false);
   const [progress, setProgress] = React.useState(0);
   const [isLoading, setLoading] = React.useState(true);
-
-  console.log(userData);
   const fetchUser = async () => {
     try {
       const response = await axios.get("/api/task");
       const useResponse = await axios.get("/api/user");
       if (response.status === 200) {
         setData(response?.data?.task);
-        const taskList = response?.data?.task;
-        const total = taskList.filter((item: any) => {
-          return item.isCompleted === true;
-        });
-        setProgress((total.length / taskList.length) * 100);
+        if (useResponse.status === 200) {
+          const totalTaskCompleted = useResponse?.data?.totalTaskCompleted;
+          setUserData({
+            ...useResponse?.data?.data,
+            totalTaskCompleted: totalTaskCompleted,
+          });
+          setProgress((totalTaskCompleted / response?.data?.task.length) * 100);
+        }
       }
-
-      if (useResponse.status === 200) setUserData(useResponse?.data?.data);
     } catch (error) {
       const err = errorMessage(error);
       toast({
@@ -81,36 +80,32 @@ export default function Home() {
           });
           return newArray;
         });
-        // TODO optimize this code
-        const newArray = data.map((item: any) => {
-          if (item._id === itemID) {
-            const newObj = { ...item, isCompleted: !item.isCompleted };
-            return newObj;
-          }
-          return item;
-        });
-        const total = newArray.filter((item: any) => {
-          return item.isCompleted === true;
-        });
-        console.log(total);
-        setProgress((total.length / newArray.length) * 100);
-        console.log(
-          userData.isAllTasksCompleted,
-          (total.length / newArray.length) * 100 != 100
+        const totalTaskCompleted = Number(
+          response?.data?.data?.totalTaskCompleted
         );
+        const taskLength = Number(data.length);
+        setProgress((totalTaskCompleted / taskLength) * 100);
         if (
           userData.isAllTasksCompleted &&
-          (total.length / newArray.length) * 100 <= 100
+          (totalTaskCompleted / taskLength) * 100 <= 100
         ) {
           await axios.get("/api/user/allTaskComplete");
           setUserData((prev: any) => {
-            return { ...prev, isAllTasksCompleted: false };
+            return {
+              ...prev,
+              isAllTasksCompleted: false,
+              totalTaskCompleted: totalTaskCompleted,
+            };
           });
         }
-        if ((total.length / newArray.length) * 100 === 100) {
+        if ((totalTaskCompleted / taskLength) * 100 === 100) {
           await axios.get("/api/user/allTaskComplete");
           setUserData((prev: any) => {
-            return { ...prev, isAllTasksCompleted: true };
+            return {
+              ...prev,
+              isAllTasksCompleted: true,
+              totalTaskCompleted: totalTaskCompleted,
+            };
           });
         }
       }
@@ -170,7 +165,12 @@ export default function Home() {
                       disabled={disable}
                       className="border border-white rounded-md"
                     />
-                    <Label htmlFor="terms" className="text-base">
+                    <Label
+                      htmlFor="terms"
+                      className={`text-base ${
+                        item?.isCompleted && "line-through"
+                      }`}
+                    >
                       {item?.title}
                     </Label>
                   </div>

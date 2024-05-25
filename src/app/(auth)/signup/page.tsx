@@ -59,7 +59,6 @@ export default function SignUp() {
         });
         route.push("/");
       }
-      console.log(resData);
     } catch (error) {
       console.log(error);
       const errMessage = errorMessage(error);
