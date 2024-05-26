@@ -37,7 +37,6 @@ const formSchema = z.object({
 export default function SignUp() {
   const route = useRouter();
   const [isLoading, setLoading] = useState(false);
-  // 1. Define your form.
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -47,7 +46,6 @@ export default function SignUp() {
     },
   });
 
-  // 2. Define a submit handler.
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setLoading(true);
     try {
