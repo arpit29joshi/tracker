@@ -2,25 +2,25 @@
 import { toast } from "@/components/ui/use-toast";
 import { errorMessage } from "@/helpers/utils";
 import axios from "axios";
-import React, { useEffect, useState } from "react";
 import { Pencil } from "lucide-react";
+import React, { useEffect, useState } from "react";
 
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Separator } from "@/components/ui/separator";
-import { TaskDialog } from "@/components/ui/TaskDialog";
 import Header from "@/components/shared/Header";
-import { Checkbox } from "@/components/ui/checkbox";
+import { TaskDialog } from "@/components/ui/TaskDialog";
 import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
+import { Task } from "@/type";
 import { useRouter } from "next/navigation";
 
 function Profile() {
   const route = useRouter();
-  const [data, setData] = React.useState<any>([]);
-  const [isLoading, setLoading] = React.useState(true);
-  const [editMode, setEditMode] = useState({
+  const [data, setData] = React.useState<Task[]>([]);
+  const [isLoading, setLoading] = React.useState<boolean>(true);
+  const [editMode, setEditMode] = useState<{
+    show: boolean;
+    task: Task | null;
+  }>({
     show: false,
-    task: "",
+    task: null,
   });
   const fetchUser = async () => {
     try {
@@ -52,7 +52,7 @@ function Profile() {
           <p className="text-xl  m-3 font-bold">Your Tasks</p>
           <div className="max-h-[50VH] overflow-y-auto text-center mx-3 flex flex-col justify-center items-center">
             {data && data.length > 0 ? (
-              data.map((item: any) => {
+              data.map((item: Task) => {
                 return (
                   <div
                     className="flex items-center space-x-2 my-2"
@@ -80,12 +80,7 @@ function Profile() {
               setEditMode={setEditMode}
             />
           )}
-          <TaskDialog
-            taskList={data}
-            type={0}
-            setData={setData}
-            modalOpen={false}
-          />
+          <TaskDialog type={0} setData={setData} modalOpen={false} />
         </div>
       )}
     </>

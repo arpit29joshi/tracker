@@ -10,10 +10,24 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { errorMessage } from "@/helpers/utils";
+import { Task } from "@/type";
+import axios from "axios";
 import { useState } from "react";
 import { toast } from "./use-toast";
-import { errorMessage } from "@/helpers/utils";
-import axios from "axios";
+
+interface TaskDialogProps {
+  editMode?: {
+    task: Task | null;
+    show: boolean;
+  };
+  type: number;
+  setData: React.Dispatch<React.SetStateAction<Task[]>>;
+  modalOpen: boolean;
+  setEditMode?: React.Dispatch<
+    React.SetStateAction<{ task: Task | null; show: boolean }>
+  >;
+}
 
 export function TaskDialog({
   editMode,
@@ -21,12 +35,12 @@ export function TaskDialog({
   setData,
   modalOpen,
   setEditMode = () => {},
-}: any) {
-  const [newTask, setNewTask] = useState(
-    !modalOpen ? null : editMode?.task?.title
+}: TaskDialogProps) {
+  const [newTask, setNewTask] = useState<string | null>(
+    !modalOpen ? null : editMode?.task?.title ?? ""
   );
-  const [disable, setDisable] = useState(false);
-  const [isDialogOpen, setIsDialogOpen] = useState(modalOpen ?? false); // Initialize state with modalOpen or false
+  const [disable, setDisable] = useState<boolean>(false);
+  const [isDialogOpen, setIsDialogOpen] = useState<boolean>(modalOpen ?? false); // Initialize state with modalOpen or false
   async function addTask() {
     if (!newTask) return;
     setDisable(true);
@@ -35,7 +49,7 @@ export function TaskDialog({
         title: newTask,
       });
       if (response.status === 201) {
-        setData((prev: any) => [...prev, response?.data?.data]);
+        setData((prev: Task[]) => [...prev, response?.data?.data]);
         toast({
           title: response?.data?.message,
         });
@@ -58,12 +72,12 @@ export function TaskDialog({
     try {
       const response = await axios.put("/api/task", {
         title: newTask,
-        id: editMode?.task._id,
+        id: editMode?.task?._id,
       });
       if (response.status === 200) {
-        setData((prev: any) => {
-          const newArray = prev.map((item: any) => {
-            if (item._id === editMode?.task._id) {
+        setData((prev: Task[]) => {
+          const newArray = prev.map((item: Task) => {
+            if (item._id === editMode?.task?._id) {
               const newObj = { ...item, title: newTask };
               return newObj;
             }
@@ -85,7 +99,7 @@ export function TaskDialog({
       setDisable(false);
       setNewTask("");
       setIsDialogOpen(false);
-      setEditMode({ show: false, task: "" });
+      setEditMode({ show: false, task: null });
     }
   }
 
@@ -93,12 +107,12 @@ export function TaskDialog({
     setDisable(true);
     try {
       const response = await axios.put("/api/task/delete", {
-        id: editMode?.task._id,
+        id: editMode?.task?._id,
       });
       if (response.status === 201) {
-        setData((prev: any) => {
-          const newArray = prev.filter((item: any) => {
-            return item._id !== editMode?.task._id;
+        setData((prev: Task[]) => {
+          const newArray = prev.filter((item: Task) => {
+            return item._id !== editMode?.task?._id;
           });
           return newArray;
         });
@@ -116,7 +130,7 @@ export function TaskDialog({
       setDisable(false);
       setNewTask("");
       setIsDialogOpen(false);
-      setEditMode({ show: false, task: "" });
+      setEditMode({ show: false, task: null });
     }
   }
   return (
@@ -125,7 +139,7 @@ export function TaskDialog({
       onOpenChange={(open) => {
         setIsDialogOpen(open); // Properly handle the open state of the dialog
         if (!open) {
-          setEditMode({ show: false, task: "" });
+          setEditMode({ show: false, task: null });
           setNewTask("");
         }
       }}
@@ -160,7 +174,7 @@ export function TaskDialog({
             <Input
               id="name"
               placeholder="Exercise"
-              value={newTask}
+              value={newTask || ""}
               onChange={(e) => setNewTask(e.target.value)}
               className="col-span-3 text-black"
             />

@@ -9,14 +9,15 @@ import { Progress } from "@/components/ui/progress";
 import Header from "@/components/shared/Header";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
+import { Task, User } from "@/type";
 
 export default function Home() {
   const route = useRouter();
-  const [data, setData] = React.useState<any>([]);
-  const [userData, setUserData] = React.useState<any>(null);
-  const [disable, setDisable] = useState(false);
-  const [progress, setProgress] = React.useState(0);
-  const [isLoading, setLoading] = React.useState(true);
+  const [data, setData] = React.useState<Array<Task>>([]);
+  const [userData, setUserData] = React.useState<User | null>(null);
+  const [disable, setDisable] = useState<boolean>(false);
+  const [progress, setProgress] = React.useState<number>(0);
+  const [isLoading, setLoading] = React.useState<boolean>(true);
   const fetchUser = async () => {
     try {
       const response = await axios.get("/api/task");
@@ -70,8 +71,8 @@ export default function Home() {
         toast({
           title: response.data.message,
         });
-        setData((prv: any) => {
-          const newArray = prv.map((item: any) => {
+        setData((prv: Task[]) => {
+          const newArray = prv.map((item: Task) => {
             if (item._id === itemID) {
               const newObj = { ...item, isCompleted: !item.isCompleted };
               return newObj;
@@ -86,26 +87,32 @@ export default function Home() {
         const taskLength = Number(data.length);
         setProgress((totalTaskCompleted / taskLength) * 100);
         if (
-          userData.isAllTasksCompleted &&
+          userData?.isAllTasksCompleted &&
           (totalTaskCompleted / taskLength) * 100 <= 100
         ) {
           await axios.get("/api/user/allTaskComplete");
-          setUserData((prev: any) => {
-            return {
-              ...prev,
-              isAllTasksCompleted: false,
-              totalTaskCompleted: totalTaskCompleted,
-            };
+          setUserData((prev: User | null) => {
+            if (prev) {
+              return {
+                ...prev,
+                isAllTasksCompleted: false,
+                totalTaskCompleted: totalTaskCompleted,
+              };
+            }
+            return null;
           });
         }
         if ((totalTaskCompleted / taskLength) * 100 === 100) {
           await axios.get("/api/user/allTaskComplete");
-          setUserData((prev: any) => {
-            return {
-              ...prev,
-              isAllTasksCompleted: true,
-              totalTaskCompleted: totalTaskCompleted,
-            };
+          setUserData((prev: User | null) => {
+            if (prev) {
+              return {
+                ...prev,
+                isAllTasksCompleted: true,
+                totalTaskCompleted: totalTaskCompleted,
+              };
+            }
+            return null;
           });
         }
       }
@@ -152,7 +159,7 @@ export default function Home() {
           />
           <div className=" text-center overflow-y-auto mt-2">
             {data && data.length > 0 ? (
-              data.map((item: any) => {
+              data.map((item: Task) => {
                 return (
                   <div
                     className="flex items-center space-x-2 my-5 justify-center"
