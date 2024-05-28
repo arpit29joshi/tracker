@@ -30,6 +30,23 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json({ error: "Task not found" }, { status: 400 });
     }
     const deletedTask = await Task.findByIdAndDelete({ _id: id });
+    const user = await User.findById(userId);
+    const userTasks = await (await Task.find({ userId })).length;
+    const userCompletedTasks = await (
+      await Task.find({ userId, isCompleted: true })
+    ).length;
+    console.log(user.isAllTasksCompleted, userTasks, userCompletedTasks);
+
+    if (!user.isAllTasksCompleted && userCompletedTasks === userTasks) {
+      console.log("45");
+      user.isAllTasksCompleted = true;
+      await user.save();
+    }
+    if (user.isAllTasksCompleted && userTasks == 0) {
+      console.log("40");
+      user.isAllTasksCompleted = false;
+      await user.save();
+    }
     return NextResponse.json(
       { message: "Task deleted successfully", data: deletedTask },
       { status: 201 }

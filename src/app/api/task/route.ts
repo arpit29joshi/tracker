@@ -57,6 +57,10 @@ export async function POST(request: NextRequest) {
     }
     const newTask = new Task({ title, userId });
     await newTask.save();
+    if (chekUser.isAllTasksCompleted) {
+      chekUser.isAllTasksCompleted = false;
+      await chekUser.save();
+    }
     return NextResponse.json(
       { message: "Task created successfully", data: newTask },
       { status: 201 }
