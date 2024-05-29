@@ -62,13 +62,13 @@ TOKEN_SECREST=
 AUTH_SECRET=
 ```
 
-3.
+3.  Install node modules
 
 ```
 npm i
 ```
 
-4.
+4.  Start App
 
 ```
 npm run dev
